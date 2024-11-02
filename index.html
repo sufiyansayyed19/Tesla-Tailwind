@@ -17,8 +17,9 @@
         { transform: translate(-50%,-50%); } .model_name { @apply text-[2.5rem] md:text-[4rem] lg:text-[4rem] text-[#393c41] font-semibold } .tag_line { @apply text-[#4c4d51] text-2xl } .btnDiv { @apply absolute top-[80%] md:top-[88%] lg:top-[88%] left-[50%]
         } /* .btn { @apply w-[20rem] h-[3.5rem] text-2xl m-3 p-3 rounded-[0.5rem] bg-opacity-80 hover:scale-105 transition duration-200 font-medium } */ .btn_blue { @apply w-[20rem] h-[3.5rem] text-2xl m-3 p-3 rounded-[0.5rem] bg-opacity-80 hover:scale-105
         transition duration-200 font-medium bg-blue-600 text-white ; } .btn_white { @apply w-[20rem] h-[3.5rem] text-2xl m-3 p-3 rounded-[0.5rem] bg-opacity-80 hover:scale-105 transition duration-200 font-medium bg-white; } .downArrow { @apply block w-full
-        h-20 mx-auto absolute top-[90%] animate-bounce sm:top-[95%]; } .iconStyle { @apply h-[25px] items-center inline-block ml-[20px]; } .hamburger { @apply lg:hidden inline-block h-[25px] ml-[20px] ; } .sideBar { @apply transition-all duration-300
-        translate-x-[-100%] flex flex-col gap-10 absolute left-0 top-0 p-16 w-[30rem] h-[100vh] bg-white lg:hidden; }
+        h-20 mx-auto absolute top-[90%] animate-bounce sm:top-[95%]; } .iconStyle { @apply h-[25px] items-center inline-block ml-[20px]; } .hamburger { @apply lg:hidden inline-block h-[25px] ml-[20px] ; } .sideBar {
+         @apply transition-all duration-300 z-30 flex flex-col gap-10 absolute left-0 top-0 p-16 w-[30rem] h-[100vh] bg-white lg:hidden;
+        }.sideBar.is-hidden { @apply translate-x-[-100%];  }
     </style>
 </head>
 
@@ -249,33 +250,49 @@
         const sidebar = document.getElementById('sidebar');
         const hamburger = document.getElementById('hamburger'); // Your hamburger icon button
         const cross = document.getElementById('cross'); // Your cross icon button
-        const header = document.getElementById('header')
-
-        function closeSidebar(){
-            sidebar.classList.remove('translate-x-0');
-            sidebar.classList.add('translate-x-[-100%]');
+        const header = document.getElementById('header');
+    
+        // Initially hide the sidebar
+        sidebar.classList.add('is-hidden');
+    
+        // Function to open the sidebar
+        function openSidebar() {
+            sidebar.classList.remove('is-hidden'); // Show the sidebar
+            sidebar.classList.remove('translate-x-[-100%]'); // Remove the hidden transform
+            sidebar.classList.add('translate-x-0'); // Move the sidebar into view
         }
-        // Open sidebar when clicking the hamburger
+    
+        // Function to close the sidebar
+        function closeSidebar() {
+            sidebar.classList.add('translate-x-[-100%]'); // Move the sidebar out of view
+            sidebar.classList.remove('translate-x-0'); // Ensure the sidebar is visually hidden
+            sidebar.classList.add('is-hidden'); // Add is-hidden to prevent future clicks from showing it immediately
+        }
+    
+        // Event listener for the hamburger button
         hamburger.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevents the click event from propagating to the document
-            sidebar.classList.remove('translate-x-[-100%]');
-            sidebar.classList.add('translate-x-0');
-        });
-
-        // Close sidebar when clicking the cross icon
-        cross.addEventListener('click', (e) => {
-            e.stopPropagation(); // Prevents the click event from propagating to the document
-            closeSidebar();
-        });
-
-        // Close sidebar when clicking outside of it
-        document.addEventListener('click', (e) => {
-            if (!sidebar.contains(e.target) && e.target !== hamburger) { 
+            e.stopPropagation();
+            if (sidebar.classList.contains('is-hidden')) {
+                openSidebar();
+            } else {
                 closeSidebar();
             }
         });
-
-        //Change backgroud while scroling window objects
+    
+        // Event listener for the cross button
+        cross.addEventListener('click', (e) => {
+            e.stopPropagation();
+            closeSidebar(); // Close the sidebar
+        });
+    
+        // Close sidebar when clicking outside of it
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && e.target !== hamburger) {
+                closeSidebar(); // Close sidebar if clicking outside
+            }
+        });
+    
+        // Change background while scrolling the window
         window.addEventListener('scroll', changeBackground);
         function changeBackground() {
             if (window.scrollY > 50) {  // Set scroll threshold here
@@ -284,8 +301,9 @@
                 header.classList.remove('bg-white');
             }
         }
-
-        function bankPage(){
+    
+        // Function to navigate to bank page
+        function bankPage() {
             window.location.href = "./bankBalance.html";
         }
     </script>
